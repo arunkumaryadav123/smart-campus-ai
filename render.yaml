@@ -2,19 +2,15 @@ services:
   - type: web
     name: smart-campus-ai
     runtime: python
-    plan: starter
+    plan: free
     buildCommand: pip install -r requirements.txt
     startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
     healthCheckPath: /api/health
-    disk:
-      name: smart-campus-campus-data
-      mountPath: /var/data
-      sizeGB: 1
     envVars:
       - key: DATABASE_PATH
-        value: /var/data/campus.db
+        value: /tmp/campus.db
       - key: SEED_DEMO_USERS
-        value: "false"
+        value: "true"
       - key: ADMIN_USERNAME
         value: admin
       - key: ADMIN_PASSWORD
