@@ -335,3 +335,12 @@ def assistant(payload: AskRequest, authorization: str | None = Header(default=No
     else:
         answer = "I can help with library hours, timetable guidance, Wi-Fi, fees, attendance, and campus requests. For official or live data, contact the relevant campus office."
     return {"answer": answer, "mode": "local-faq", "note": "Demo assistant; not connected to live university systems."}
+
+
+# Student Analytics and Success Platform routes
+from .analytics import router as analytics_router
+app.include_router(analytics_router)
+
+@app.get("/success", response_class=HTMLResponse)
+def student_success_home():
+    return (ROOT / "static" / "success.html").read_text(encoding="utf-8")
