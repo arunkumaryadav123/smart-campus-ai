@@ -37,6 +37,11 @@ async function loadAnnouncements() {
   renderAnnouncements(items.slice(0, 2), "overview-announcements");
   renderAnnouncements(items, "announcements-list");
 }
+async function loadUsers() {
+  if (!me || me.role !== "admin") return;
+  const items = await api("/api/users");
+  $("users-list").innerHTML = items.length ? items.map(u => `<article class="task"><div><h4>${escapeHtml(u.name)}</h4><p>@${escapeHtml(u.username)}</p></div><span class="status ${u.role === "admin" ? "closed" : ""}">${escapeHtml(u.role)}</span></article>`).join("") : '<div class="panel">No users found.</div>';
+}
 async function loadTasks() {
   const items = await api("/api/tasks");
   $("stat-tasks").textContent = items.length;
@@ -52,8 +57,8 @@ async function enterApp() {
   catch { signOut(false); return; }
   $("login-panel").classList.add("hidden"); $("app-panel").classList.remove("hidden"); $("logout").classList.remove("hidden");
   $("user-name").textContent = me.name; $("user-role").textContent = me.role; $("avatar").textContent = me.name.charAt(0).toUpperCase(); $("welcome-name").textContent = me.name.split(" ")[0];
-  $("announcement-create").classList.toggle("hidden", !["admin","faculty"].includes(me.role));
-  await Promise.all([loadAnnouncements(), loadTasks()]);
+  $("announcement-create").classList.toggle("hidden", !["admin","faculty"].includes(me.role));\n  $("nav-users").classList.toggle("hidden", me.role !== "admin");
+  await Promise.all([loadAnnouncements(), loadTasks(), ...(me.role === "admin" ? [loadUsers()] : [])]);
   showSection("overview");
 }
 function signOut(callApi=true) {
@@ -70,6 +75,26 @@ $("login-form").addEventListener("submit", async e => {
   } catch(err) { $("login-error").textContent = err.message; }
 });
 $("logout").addEventListener("click", () => signOut());
+$("user-form").addEventListener("submit", async e => {
+  e.preventDefault();
+  const button = e.submitter;
+  if (button) button.disabled = true;
+  try {
+    await api("/api/users", {method:"POST",body:JSON.stringify({
+      name:$("new-user-name").value.trim(),
+      username:$("new-username").value.trim(),
+      password:$("new-user-password").value,
+      role:$("new-user-role").value
+    })});
+    e.target.reset();
+    await loadUsers();
+    toast("Campus account created.");
+  } catch(err) {
+    toast(err.message);
+  } finally {
+    if (button) button.disabled = false;
+  }
+});
 $("announcement-form").addEventListener("submit", async e => {
   e.preventDefault();
   try {
