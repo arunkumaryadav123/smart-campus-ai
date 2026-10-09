@@ -69,7 +69,7 @@ def test_faculty_can_publish_announcement(client):
         headers=headers(token),
         json={"title": "Exam notice", "body": "The lab exam starts at 10 AM."},
     )
-    assert response.status_code == 200
+    assert response.status_code == 201
     items = client.get("/api/announcements", headers=headers(token)).json()
     assert any(item["title"] == "Exam notice" for item in items)
 
