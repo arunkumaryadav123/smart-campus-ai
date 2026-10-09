@@ -176,3 +176,68 @@ def test_logout_invalidates_session(client):
     response = client.post("/api/logout", headers=headers(token))
     assert response.status_code == 200
     assert client.get("/api/me", headers=headers(token)).status_code == 401
+
+
+def test_admin_can_view_student_analytics_overview(client):
+    token = login(client, "admin", "admin123")
+    response = client.get("/api/analytics/overview", headers=headers(token))
+    assert response.status_code == 200
+    data = response.json()
+    assert data["student_count"] >= 5
+    assert 0 <= data["average_attendance"] <= 100
+    assert len(data["students"]) == data["student_count"]
+
+
+def test_student_only_sees_own_analytics(client):
+    token = login(client, "student", "student123")
+    response = client.get("/api/analytics/overview", headers=headers(token))
+    assert response.status_code == 200
+    assert response.json()["student_count"] == 1
+    assert response.json()["students"][0]["username"] == "student"
+    assert client.get("/api/analytics/students/ananya", headers=headers(token)).status_code == 403
+
+
+def test_faculty_can_update_student_metrics(client):
+    token = login(client, "faculty", "faculty123")
+    response = client.put(
+        "/api/analytics/students/rahul",
+        headers=headers(token),
+        json={
+            "full_name": "Rahul Verma",
+            "section": "CSE-A",
+            "attendance_present": 20,
+            "attendance_total": 25,
+            "assignments_done": 20,
+            "assignments_total": 25,
+            "marks": [80, 82, 84],
+        },
+    )
+    assert response.status_code == 200, response.text
+    assert response.json()["attendance_rate"] == 80
+    assert response.json()["average_marks"] == 82
+
+
+def test_student_cannot_update_metrics(client):
+    token = login(client, "student", "student123")
+    response = client.put(
+        "/api/analytics/students/student",
+        headers=headers(token),
+        json={
+            "full_name": "Demo Student",
+            "section": "CSE-A",
+            "attendance_present": 18,
+            "attendance_total": 20,
+            "assignments_done": 18,
+            "assignments_total": 20,
+            "marks": [78, 84, 81],
+        },
+    )
+    assert response.status_code == 403
+
+
+def test_study_plan_returns_actionable_recommendations(client):
+    token = login(client, "student", "student123")
+    response = client.get("/api/analytics/study-plan", headers=headers(token))
+    assert response.status_code == 200
+    assert response.json()["tasks"]
+    assert any("priority" in task and "detail" in task for task in response.json()["tasks"])
