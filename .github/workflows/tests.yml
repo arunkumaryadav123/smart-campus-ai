@@ -22,6 +22,6 @@ jobs:
       - name: Compile Python files
         run: python -m compileall -q app tests
       - name: Check frontend JavaScript syntax
-        run: node --check app/static/app.js
+        run: node --check app/static/app.js && node --check app/static/success.js
       - name: Run API regression tests
         run: pytest -q
