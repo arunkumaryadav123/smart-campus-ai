@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Smart Campus AI</title>
+  <link rel="stylesheet" href="/static/styles.css" />
+</head>
+<body>
+  <div class="shell">
+    <aside class="sidebar">
+      <div class="brand"><div class="brand-icon">✦</div><div><strong>CampusAI</strong><small>SMART CAMPUS PORTAL</small></div></div>
+      <div class="nav-label">WORKSPACE</div>
+      <button class="nav active" data-section="overview">▦ <span>Overview</span></button>
+      <button class="nav" data-section="announcements">◉ <span>Announcements</span></button>
+      <button class="nav" data-section="requests">☷ <span>Requests</span></button>
+      <button class="nav" data-section="assistant">✧ <span>AI Assistant</span></button>
+      <div class="sidebar-bottom"><div class="status-dot"></div><span>Campus systems demo</span></div>
+    </aside>
+    <main class="main">
+      <header class="topbar"><div><div class="eyebrow">YOUR CAMPUS, CONNECTED</div><h1 id="page-title">Overview</h1></div>
+        <div class="user-wrap"><div class="avatar" id="avatar">S</div><div><strong id="user-name">Guest</strong><small id="user-role">Not signed in</small></div><button id="logout" class="ghost hidden">Log out</button></div>
+      </header>
+      <section id="login-panel" class="login-layout">
+        <div class="welcome"><div class="pill">✦ SMART CAMPUS AI</div><h2>A smarter way to<br><span>campus life.</span></h2><p>Campus updates, student requests, and a helpful AI assistant — in one simple workspace.</p>
+          <div class="feature-row"><div class="feature-icon">◉</div><div><strong>Campus updates</strong><small>Stay on top of important announcements.</small></div></div>
+          <div class="feature-row"><div class="feature-icon">✧</div><div><strong>AI-powered help</strong><small>Get quick answers to common campus questions.</small></div></div>
+        </div>
+        <div class="login-card"><div class="login-mark">↗</div><h3>Welcome back</h3><p>Sign in to your campus workspace.</p>
+          <form id="login-form"><label>Username</label><input id="username" placeholder="Enter username" required autocomplete="username" />
+          <label>Password</label><input id="password" type="password" placeholder="Enter password" required autocomplete="current-password" />
+          <button class="primary full" type="submit">Sign in <span>→</span></button><div id="login-error" class="error"></div></form>
+          <div class="demo-box"><strong>Demo accounts</strong><div><span>Admin</span><code>admin / admin123</code></div><div><span>Faculty</span><code>faculty / faculty123</code></div><div><span>Student</span><code>student / student123</code></div></div>
+        </div>
+      </section>
+      <section id="app-panel" class="hidden">
+        <div id="overview" class="section">
+          <div class="hero-card"><div><div class="eyebrow light">CAMPUS SNAPSHOT</div><h2>Good to have you here, <span id="welcome-name">there</span>.</h2><p>Here’s what’s happening in your campus workspace.</p><button class="light-button" data-go="announcements">View announcements →</button></div><div class="hero-art"><div class="orb orb-one"></div><div class="orb orb-two"></div><div class="campus-building">⌂</div></div></div>
+          <div class="stats"><div class="stat-card"><div class="stat-top"><span>Announcements</span><span class="stat-icon">◉</span></div><strong id="stat-announcements">—</strong><small>Campus updates</small></div><div class="stat-card"><div class="stat-top"><span>My requests</span><span class="stat-icon">☷</span></div><strong id="stat-tasks">—</strong><small>Requests you've created</small></div><div class="stat-card"><div class="stat-top"><span>Assistant</span><span class="stat-icon">✧</span></div><strong>Ready</strong><small>Local FAQ mode</small></div></div>
+          <div class="section-heading"><div><h3>Latest announcements</h3><p>Recent updates from campus</p></div><button class="text-button" data-go="announcements">See all →</button></div><div id="overview-announcements" class="announcement-grid"></div>
+        </div>
+        <div id="announcements" class="section hidden">
+          <div class="section-heading"><div><h3>Campus announcements</h3><p>Official updates shared in this demo portal.</p></div></div>
+          <div id="announcement-create" class="panel hidden"><h4>Publish an announcement</h4><form id="announcement-form" class="inline-form"><input id="announcement-title" placeholder="Announcement title" required minlength="3"/><textarea id="announcement-body" placeholder="Write the update..." required minlength="3"></textarea><button class="primary" type="submit">Publish</button></form></div>
+          <div id="announcements-list" class="announcement-grid"></div>
+        </div>
+        <div id="requests" class="section hidden">
+          <div class="section-heading"><div><h3>Campus requests</h3><p>Report an issue or track a request.</p></div></div>
+          <div class="panel"><h4>Create a request</h4><form id="task-form" class="request-form"><input id="task-title" placeholder="Request title (e.g. Wi-Fi in Block B)" required minlength="3"/><textarea id="task-description" placeholder="Describe the issue and its location..." required minlength="3"></textarea><button class="primary" type="submit">Submit request →</button></form></div>
+          <div class="section-heading compact"><div><h3>Your requests</h3><p id="task-caption">Requests you have created.</p></div></div><div id="tasks-list" class="task-list"></div>
+        </div>
+        <div id="assistant" class="section hidden">
+          <div class="assistant-layout"><div class="assistant-intro"><div class="assistant-symbol">✧</div><div class="eyebrow">CAMPUS SUPPORT</div><h2>Ask Campus AI.</h2><p>Get quick guidance for common campus questions. This demo runs locally and does not connect to live university systems.</p><div class="suggestions"><button data-question="What are the library hours?">Library hours ↗</button><button data-question="How do I connect to campus Wi-Fi?">Campus Wi-Fi ↗</button><button data-question="How do I report a maintenance issue?">Report an issue ↗</button><button data-question="Where can I check attendance?">Attendance ↗</button></div></div>
+          <div class="chat-card"><div class="chat-header"><div class="assistant-mini">✧</div><div><strong>Campus Assistant</strong><small><span class="live-dot"></span> Local FAQ mode</small></div></div><div id="chat-messages" class="chat-messages"><div class="message bot">Hi! I’m your campus assistant. Ask me about library hours, Wi-Fi, fees, attendance, or campus requests.</div></div><form id="chat-form" class="chat-input"><input id="chat-question" placeholder="Ask a campus question..." required/><button class="primary" type="submit">↑</button></form><div class="chat-foot">AI answers may be incomplete. Verify official information with campus staff.</div></div></div>
+        </div>
+      </section>
+      <div id="toast" class="toast"></div>
+      <footer>Smart Campus AI <span>•</span> Student project demo</footer>
+    </main>
+  </div>
+  <script src="/static/app.js"></script>
+</body>
+</html>
