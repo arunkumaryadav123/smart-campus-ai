@@ -120,19 +120,36 @@ def study_plan(authorization: str | None = Header(default=None)):
     user = current_user(authorization)
     ensure_schema()
     with db() as con:
-        row = con.execute("SELECT * FROM student_metrics WHERE username=?", (user["username"],)).fetchone()
-    if not row:
-        raise HTTPException(status_code=404, detail="No analytics record is available for your account yet.")
-    s = serialize(row)
+        if user["role"] == "student":
+            rows = con.execute("SELECT * FROM student_metrics WHERE username=?", (user["username"],)).fetchall()
+        else:
+            rows = con.execute("SELECT * FROM student_metrics ORDER BY full_name").fetchall()
+    data = [serialize(row) for row in rows]
+    if not data:
+        raise HTTPException(status_code=404, detail="No analytics records are available yet.")
     tasks = []
-    if s["attendance_rate"] < 75:
-        tasks.append({"priority":"High","title":"Improve attendance","detail":f"Your attendance is {s['attendance_rate']}%. Attend upcoming classes and contact faculty about missed lessons."})
-    if s["average_marks"] < 70:
-        tasks.append({"priority":"High","title":"Revise weak topics","detail":"Review your last assessment, list three difficult concepts, and practise five questions for each."})
-    if s["assignment_rate"] < 80:
-        tasks.append({"priority":"Medium","title":"Finish pending assignments","detail":f"You have completed {s['assignments_done']} of {s['assignments_total']} assignments. Schedule a focused catch-up session."})
-    if not tasks:
-        tasks.append({"priority":"Low","title":"Maintain your progress","detail":"Keep attendance steady, review notes for 20 minutes daily, and prepare for the next assessment early."})
-    tasks.append({"priority":"Medium","title":"Use a focused study block","detail":"Try 25 minutes of distraction-free study followed by a 5-minute break."})
-    return {"student":s["full_name"],"generated_at":now_iso(),"tasks":tasks,
+    if user["role"] == "student":
+        s = data[0]
+        if s["attendance_rate"] < 75:
+            tasks.append({"priority":"High","title":"Improve attendance","detail":f"Your attendance is {s['attendance_rate']}%. Attend upcoming classes and contact faculty about missed lessons."})
+        if s["average_marks"] < 70:
+            tasks.append({"priority":"High","title":"Revise weak topics","detail":"Review your last assessment, list three difficult concepts, and practise five questions for each."})
+        if s["assignment_rate"] < 80:
+            tasks.append({"priority":"Medium","title":"Finish pending assignments","detail":f"You have completed {s['assignments_done']} of {s['assignments_total']} assignments. Schedule a focused catch-up session."})
+        if not tasks:
+            tasks.append({"priority":"Low","title":"Maintain your progress","detail":"Keep attendance steady, review notes for 20 minutes daily, and prepare for the next assessment early."})
+        student_name = s["full_name"]
+    else:
+        high = [s for s in data if s["risk"] == "High"]
+        medium = [s for s in data if s["risk"] == "Medium"]
+        if high:
+            names = ", ".join(s["full_name"] for s in high[:5])
+            tasks.append({"priority":"High","title":"Schedule early-support check-ins","detail":f"Start with {names}. Review attendance, ask about barriers, and agree on one practical next step with each student."})
+        if medium:
+            names = ", ".join(s["full_name"] for s in medium[:5])
+            tasks.append({"priority":"Medium","title":"Monitor students close to the threshold","detail":f"Check in with {names}. Review the next assessment and assignment completion before deciding on additional support."})
+        tasks.append({"priority":"Medium","title":"Run a weekly progress review","detail":"Review attendance, assessment marks, and assignment completion together. Confirm records with faculty before taking action."})
+        student_name = "Class cohort"
+    tasks.append({"priority":"Low","title":"Keep interventions supportive","detail":"Use these demo indicators as prompts for a conversation, not as labels. Confirm the context with the student before drawing conclusions."})
+    return {"student":student_name,"generated_at":now_iso(),"tasks":tasks,
             "disclaimer":"Recommendations use fictional demo metrics. They are guidance, not official academic decisions."}
