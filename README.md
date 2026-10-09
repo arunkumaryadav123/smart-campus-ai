@@ -1,17 +1,14 @@
 # Smart Campus AI 🎓
 
-A full-stack campus portal built with FastAPI, SQLite, HTML, CSS, and JavaScript. It includes role-based login, persistent campus announcements, campus requests, admin user management, and a local FAQ assistant.
+A full-stack campus portal built with FastAPI, SQLite, HTML, CSS, and JavaScript. It includes role-based login, campus announcements, campus requests, admin user management, and a local FAQ assistant.
 
 ## Features
 
-- **Persistent database:** SQLite tables for users, sessions, announcements, and requests. The database path is configurable with `DATABASE_PATH`.
-- **Three roles:** Admin, faculty, and student, with API-side permission checks.
-- **User management:** Admins can create and list accounts from the website.
-- **Announcements:** Admin and faculty can publish updates; signed-in users can read them.
-- **Campus requests:** Users can submit and track requests; admins can see all requests and close them.
-- **Campus assistant:** Local FAQ answers about library hours, timetable guidance, Wi-Fi, fees, attendance, and maintenance.
-- **Session logout:** Signing out invalidates the server-side session token.
-- **Automated checks:** GitHub Actions runs Python compilation and API tests.
+- SQLite database for users, sessions, announcements, and requests; database path is configurable with `DATABASE_PATH`.
+- Three roles: admin, faculty, and student, with API-side permission checks.
+- Admin user management, announcements, campus requests, and local FAQ assistant.
+- Server-side session invalidation on logout.
+- GitHub Actions runs Python compilation, JavaScript syntax checks, and API tests.
 
 ## Run locally
 
@@ -35,7 +32,7 @@ pip install -r requirements.txt
 uvicorn app.main:app --reload
 ```
 
-Open http://127.0.0.1:8000. API documentation: http://127.0.0.1:8000/docs. Database tables and starter data are initialized automatically on first startup.
+Open http://127.0.0.1:8000. API documentation: http://127.0.0.1:8000/docs. The database and starter announcements are initialized automatically.
 
 ## Local demo accounts
 
@@ -45,7 +42,7 @@ Open http://127.0.0.1:8000. API documentation: http://127.0.0.1:8000/docs. Datab
 | Faculty | `faculty` | `faculty123` |
 | Student | `student` | `student123` |
 
-The demo accounts are seeded by default for local development. After signing in as admin, use **Manage users** to create additional accounts. Passwords created by the app are stored as PBKDF2 hashes; legacy demo hashes are upgraded when the user signs in successfully.
+These are demo credentials for local development only. The deployed Blueprint generates a separate admin password; do not use demo credentials for real student data.
 
 ## Test the project
 
@@ -54,20 +51,19 @@ pip install -r requirements-dev.txt
 pytest -q
 ```
 
-The tests cover health/database connectivity, all demo logins, authorization, announcements, requests, assistant responses, user management, logout, and database persistence across connections.
+## Free Render preview deployment
 
-## Deploy with a persistent database on Render
+The repository includes `render.yaml` configured for a **free Render web service**.
 
-The repository includes `render.yaml` for a Render Blueprint deployment. It configures a persistent disk at `/var/data` and uses `/var/data/campus.db` as the SQLite database path. **A persistent disk requires a paid Render web-service plan**; do not remove the disk if you need data to survive restarts/redeploys.
+1. Open [Render Blueprint deployment](https://render.com/deploy?repo=https://github.com/arunkumaryadav123/smart-campus-ai).
+2. Connect to GitHub if prompted and select `arunkumaryadav123/smart-campus-ai`.
+3. Review the detected Blueprint, then apply/create the service using the free instance option.
+4. Wait for the deploy to finish and open the `onrender.com` URL shown by Render.
+5. Find the generated `ADMIN_PASSWORD` in the Render service's Environment settings. The admin username is `admin`.
 
-1. Push this repository to GitHub (already done).
-2. Open [Render Blueprint deployment](https://render.com/deploy?repo=https://github.com/arunkumaryadav123/smart-campus-ai).
-3. Review the service and disk settings, then create the deployment.
-4. Wait for the deploy and open the generated `onrender.com` URL.
-5. In the Render dashboard, open the service's environment settings and keep the generated `ADMIN_PASSWORD` secret safe. The deployment disables the faculty/student demo accounts by default.
-6. Sign in with username `admin` and the generated admin password. Use **Manage users** to create faculty and student accounts.
+The free preview uses an **ephemeral filesystem** and stores SQLite at `/tmp/campus.db`. This is suitable for a student demo, but database contents can disappear when the service restarts, redeploys, or its instance is replaced. The free web service may also spin down when idle and take a little time to wake up. For durable production data, use a persistent storage/database plan.
 
-Render runs the same FastAPI application and checks `/api/health` before marking the service healthy. If you deploy somewhere else, configure `DATABASE_PATH` to a persistent writable disk path; ephemeral filesystems can lose SQLite data when an instance restarts or is replaced.
+Health check: `/api/health`. API docs: `/docs`.
 
 ## API endpoints
 
@@ -83,24 +79,6 @@ Render runs the same FastAPI application and checks `/api/health` before marking
 | PATCH | `/api/tasks/{task_id}/close` | Close a request |
 | POST | `/api/assistant` | Ask the local FAQ assistant |
 
-## Project structure
-
-```text
-smart-campus-ai/
-├── app/
-│   ├── main.py
-│   └── static/
-│       ├── index.html
-│       ├── styles.css
-│       └── app.js
-├── tests/test_app.py
-├── .github/workflows/tests.yml
-├── requirements.txt
-├── requirements-dev.txt
-├── render.yaml
-└── README.md
-```
-
 ## Important limitations and security
 
-This is a student-project prototype, not a production university information system. The assistant is a local FAQ engine; it is not connected to a real university timetable, attendance, fee system, or Wi-Fi directory. Use HTTPS, keep admin credentials private, back up the persistent database, and do not store real student records until privacy, access control, backup, and security requirements have been reviewed. The Render Blueprint seeds only the admin account; local demo accounts are disabled in that deployment configuration.
+This is a student-project prototype, not a production university information system. The assistant is a local FAQ engine, not connected to a real university timetable, attendance, fee system, or Wi-Fi directory. Do not store real student records until privacy, access control, backups, and security have been reviewed. Keep the generated admin password private.
