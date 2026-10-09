@@ -28,6 +28,17 @@ pip install -r requirements.txt
 uvicorn app.main:app --reload
 ```
 
+## Run the automated tests
+
+Install the development dependencies and run the regression suite:
+
+```bash
+pip install -r requirements-dev.txt
+pytest -q
+```
+
+GitHub Actions also runs Python compilation and API regression tests on pushes and pull requests to `main`.
+
 ## Run on macOS / Linux
 ```bash
 python3 -m venv .venv
