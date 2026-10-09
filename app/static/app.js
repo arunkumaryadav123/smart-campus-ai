@@ -57,7 +57,8 @@ async function enterApp() {
   catch { signOut(false); return; }
   $("login-panel").classList.add("hidden"); $("app-panel").classList.remove("hidden"); $("logout").classList.remove("hidden");
   $("user-name").textContent = me.name; $("user-role").textContent = me.role; $("avatar").textContent = me.name.charAt(0).toUpperCase(); $("welcome-name").textContent = me.name.split(" ")[0];
-  $("announcement-create").classList.toggle("hidden", !["admin","faculty"].includes(me.role));\n  $("nav-users").classList.toggle("hidden", me.role !== "admin");
+  $("announcement-create").classList.toggle("hidden", !["admin","faculty"].includes(me.role));
+  $("nav-users").classList.toggle("hidden", me.role !== "admin");
   await Promise.all([loadAnnouncements(), loadTasks(), ...(me.role === "admin" ? [loadUsers()] : [])]);
   showSection("overview");
 }
