@@ -140,11 +140,17 @@
     $("study-plan-list").innerHTML = '<div class="loading">Building your plan…</div>';
     try {
       const plan = await api("/api/analytics/study-plan"); state.plan = plan;
-      const student = state.students[0] || {};
-      $("plan-summary").innerHTML = `
-        <span class="summary-chip">Attendance <strong>${student.attendance_rate ?? "—"}%</strong></span>
-        <span class="summary-chip">Average marks <strong>${student.average_marks ?? "—"}/100</strong></span>
-        <span class="summary-chip">Assignments <strong>${student.assignment_rate ?? "—"}%</strong></span>`;
+      const student = state.user.role === "student" ? (state.students[0] || {}) : null;
+      const summary = student ? [
+        ["Attendance", student.attendance_rate + "%"],
+        ["Average marks", student.average_marks + "/100"],
+        ["Assignments", student.assignment_rate + "%"]
+      ] : [
+        ["Cohort attendance", state.overview.average_attendance + "%"],
+        ["Cohort average", state.overview.average_marks + "/100"],
+        ["Students needing support", state.overview.high_risk_count]
+      ];
+      $("plan-summary").innerHTML = summary.map(item => `<span class="summary-chip">${item[0]} <strong>${item[1]}</strong></span>`).join("");
       $("study-plan-list").innerHTML = plan.tasks.map((t,i) => `
         <article class="plan-card"><div class="plan-number">${String(i+1).padStart(2,"0")}</div><div><span class="risk-pill ${t.priority === "High" ? "high" : t.priority === "Medium" ? "medium" : "low"}">${esc(t.priority)} priority</span><h3>${esc(t.title)}</h3><p>${esc(t.detail)}</p></div></article>`).join("");
     } catch (err) { $("study-plan-list").innerHTML = '<div class="panel"><p>' + esc(err.message) + '</p></div>'; }
