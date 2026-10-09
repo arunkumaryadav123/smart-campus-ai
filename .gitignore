@@ -4,3 +4,10 @@ __pycache__/
 .env
 app/campus.db
 .DS_Store
+
+# SQLite database and sidecar files
+*.db
+*.db-shm
+*.db-wal
+# Local environment variables
+.env
