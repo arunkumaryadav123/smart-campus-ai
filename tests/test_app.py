@@ -81,7 +81,7 @@ def test_student_can_create_and_view_request(client):
         headers=headers(token),
         json={"title": "Wi-Fi issue", "description": "Wi-Fi is not working in Block B."},
     )
-    assert created.status_code == 200
+    assert created.status_code == 201
     items = client.get("/api/tasks", headers=headers(token)).json()
     assert len(items) == 1
     assert items[0]["title"] == "Wi-Fi issue"
@@ -120,3 +120,59 @@ def test_static_frontend_is_served(client):
     assert response.status_code == 200
     assert "Smart Campus AI" in response.text
     assert client.get("/static/app.js").status_code == 200
+
+
+
+def test_database_data_survives_reopening_connection(client):
+    token = login(client, "student", "student123")
+    response = client.post(
+        "/api/tasks",
+        headers=headers(token),
+        json={"title": "Persistent request", "description": "Confirm database data is retained."},
+    )
+    assert response.status_code == 201
+    # The next request opens a fresh SQLite connection to the same database file.
+    items = client.get("/api/tasks", headers=headers(token)).json()
+    assert any(item["title"] == "Persistent request" for item in items)
+
+
+def test_admin_can_create_and_list_users(client):
+    admin_token = login(client, "admin", "admin123")
+    response = client.post(
+        "/api/users",
+        headers=headers(admin_token),
+        json={"username": "new.faculty", "password": "strongpass123", "name": "New Faculty", "role": "faculty"},
+    )
+    assert response.status_code == 201
+    assert response.json()["username"] == "new.faculty"
+    listed = client.get("/api/users", headers=headers(admin_token))
+    assert listed.status_code == 200
+    assert any(user["username"] == "new.faculty" for user in listed.json())
+
+
+def test_non_admin_cannot_manage_users(client):
+    student_token = login(client, "student", "student123")
+    assert client.get("/api/users", headers=headers(student_token)).status_code == 403
+    response = client.post(
+        "/api/users",
+        headers=headers(student_token),
+        json={"username": "intruder", "password": "strongpass123", "name": "Intruder User", "role": "admin"},
+    )
+    assert response.status_code == 403
+
+
+def test_duplicate_user_is_rejected(client):
+    admin_token = login(client, "admin", "admin123")
+    response = client.post(
+        "/api/users",
+        headers=headers(admin_token),
+        json={"username": "student", "password": "strongpass123", "name": "Duplicate Student", "role": "student"},
+    )
+    assert response.status_code == 409
+
+
+def test_logout_invalidates_session(client):
+    token = login(client, "student", "student123")
+    response = client.post("/api/logout", headers=headers(token))
+    assert response.status_code == 200
+    assert client.get("/api/me", headers=headers(token)).status_code == 401
