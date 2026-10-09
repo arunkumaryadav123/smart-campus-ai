@@ -15,6 +15,7 @@
       <button class="nav" data-section="announcements">◉ <span>Announcements</span></button>
       <button class="nav" data-section="requests">☷ <span>Requests</span></button>
       <button class="nav" data-section="assistant">✧ <span>AI Assistant</span></button>
+      <button class="nav hidden" id="nav-users" data-section="users">♙ <span>Manage users</span></button>
       <div class="sidebar-bottom"><div class="status-dot"></div><span>Campus systems demo</span></div>
     </aside>
     <main class="main">
@@ -48,6 +49,20 @@
           <div class="section-heading"><div><h3>Campus requests</h3><p>Report an issue or track a request.</p></div></div>
           <div class="panel"><h4>Create a request</h4><form id="task-form" class="request-form"><input id="task-title" placeholder="Request title (e.g. Wi-Fi in Block B)" required minlength="3"/><textarea id="task-description" placeholder="Describe the issue and its location..." required minlength="3"></textarea><button class="primary" type="submit">Submit request →</button></form></div>
           <div class="section-heading compact"><div><h3>Your requests</h3><p id="task-caption">Requests you have created.</p></div></div><div id="tasks-list" class="task-list"></div>
+        </div>
+        <div id="users" class="section hidden">
+          <div class="section-heading"><div><h3>User management</h3><p>Create accounts and assign campus roles. Admin access only.</p></div></div>
+          <div class="panel"><h4>Create a campus account</h4>
+            <form id="user-form" class="request-form">
+              <input id="new-user-name" placeholder="Full name" required minlength="2" maxlength="100"/>
+              <input id="new-username" placeholder="Username (letters, numbers, dots, dashes)" required minlength="3" maxlength="40" pattern="[A-Za-z0-9_.-]+"/>
+              <input id="new-user-password" type="password" placeholder="Temporary password (at least 8 characters)" required minlength="8" maxlength="256" autocomplete="new-password"/>
+              <select id="new-user-role" required><option value="student">Student</option><option value="faculty">Faculty</option><option value="admin">Admin</option></select>
+              <button class="primary" type="submit">Create account →</button>
+            </form>
+          </div>
+          <div class="section-heading compact"><div><h3>Registered users</h3><p>Accounts stored in the campus database.</p></div></div>
+          <div id="users-list" class="task-list"></div>
         </div>
         <div id="assistant" class="section hidden">
           <div class="assistant-layout"><div class="assistant-intro"><div class="assistant-symbol">✧</div><div class="eyebrow">CAMPUS SUPPORT</div><h2>Ask Campus AI.</h2><p>Get quick guidance for common campus questions. This demo runs locally and does not connect to live university systems.</p><div class="suggestions"><button data-question="What are the library hours?">Library hours ↗</button><button data-question="How do I connect to campus Wi-Fi?">Campus Wi-Fi ↗</button><button data-question="How do I report a maintenance issue?">Report an issue ↗</button><button data-question="Where can I check attendance?">Attendance ↗</button></div></div>
