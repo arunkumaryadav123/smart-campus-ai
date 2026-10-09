@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f5f7fb">
+  <title>Student Success | Smart Campus AI</title>
+  <link rel="stylesheet" href="/static/success.css">
+</head>
+<body>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <section id="login-screen" class="login-wrap">
+    <div class="login-art">
+      <div class="brand brand-light"><span class="brand-mark">S</span><span>Student Success</span></div>
+      <div class="login-hero">
+        <span class="eyebrow">STUDENT ANALYTICS PLATFORM</span>
+        <h1>Turn progress<br>into <em>possibility.</em></h1>
+        <p>One clear view of attendance, academic performance, assignments, and the next best step.</p>
+        <div class="login-points"><span>✓ Performance insights</span><span>✓ Early support signals</span><span>✓ Personal study plans</span></div>
+      </div>
+      <div class="art-footer">A Smart Campus AI project · Demo environment</div>
+    </div>
+    <div class="login-panel">
+      <form id="login-form" class="login-card">
+        <span class="eyebrow">WELCOME BACK</span>
+        <h2>Sign in to your portal</h2>
+        <p class="muted">Use your student, faculty, or admin demo account.</p>
+        <label for="username">Username</label>
+        <input id="username" name="username" autocomplete="username" placeholder="e.g. student" required>
+        <label for="password">Password</label>
+        <input id="password" name="password" type="password" autocomplete="current-password" placeholder="Enter password" required>
+        <button class="btn btn-primary btn-wide" type="submit" id="login-submit">Sign in <span>→</span></button>
+        <p id="login-error" class="error" hidden></p>
+        <div class="demo-box">
+          <strong>Demo accounts</strong>
+          <button type="button" class="demo-account" data-user="admin" data-pass="admin123"><span>Admin</span><code>admin / admin123</code></button>
+          <button type="button" class="demo-account" data-user="faculty" data-pass="faculty123"><span>Faculty</span><code>faculty / faculty123</code></button>
+          <button type="button" class="demo-account" data-user="student" data-pass="student123"><span>Student</span><code>student / student123</code></button>
+        </div>
+        <p class="fine-print">Fictional sample analytics are used for demonstration. Do not enter real student data.</p>
+      </form>
+    </div>
+  </section>
+
+  <div id="app-screen" class="app-shell" hidden>
+    <aside class="sidebar">
+      <a class="brand" href="/success"><span class="brand-mark">S</span><span>Student Success</span></a>
+      <div class="side-label">WORKSPACE</div>
+      <nav class="side-nav" aria-label="Main navigation">
+        <button class="nav-item active" data-view="overview"><span>▦</span> Overview</button>
+        <button class="nav-item" data-view="students" id="students-nav"><span>♙</span> Student records</button>
+        <button class="nav-item" data-view="plan"><span>✳</span> Study plan</button>
+      </nav>
+      <div class="sidebar-bottom">
+        <div class="help-card"><span class="help-icon">✦</span><strong>Small steps count.</strong><p>Consistent habits beat last-minute cramming.</p></div>
+        <a href="/" class="back-link">← Back to campus portal</a>
+        <button id="logout-button" class="logout-button">↪ Sign out</button>
+      </div>
+    </aside>
+    <main class="main-content">
+      <header class="topbar">
+        <div><div class="breadcrumb">Workspace <span>/</span> <b id="crumb">Overview</b></div><h1 id="page-title">Overview</h1></div>
+        <div class="profile"><div class="profile-avatar" id="avatar">DS</div><div><strong id="profile-name">Demo Student</strong><span id="profile-role">Student</span></div><span class="online-dot"></span></div>
+      </header>
+      <div class="page-body">
+        <section id="view-overview" class="view">
+          <div class="welcome-banner">
+            <div><span class="eyebrow">YOUR PROGRESS, AT A GLANCE</span><h2 id="welcome-title">Welcome back.</h2><p id="welcome-copy">Here is your latest learning snapshot.</p></div>
+            <div class="banner-symbol">↗</div>
+          </div>
+          <div class="metric-grid">
+            <article class="metric-card"><div class="metric-top"><span>Average attendance</span><span class="metric-icon purple">◷</span></div><div class="metric-value"><span id="attendance-value">—</span><small>%</small></div><div class="metric-foot"><span id="attendance-note">Across tracked classes</span></div><div class="progress-track"><div id="attendance-bar" class="progress-fill purple-fill"></div></div></article>
+            <article class="metric-card"><div class="metric-top"><span>Average marks</span><span class="metric-icon blue">↗</span></div><div class="metric-value"><span id="marks-value">—</span><small>/100</small></div><div class="metric-foot">Latest assessment snapshot</div><div class="progress-track"><div id="marks-bar" class="progress-fill blue-fill"></div></div></article>
+            <article class="metric-card"><div class="metric-top"><span>Assignment completion</span><span class="metric-icon green">✓</span></div><div class="metric-value"><span id="assignments-value">—</span><small>%</small></div><div class="metric-foot">Completed vs assigned</div><div class="progress-track"><div id="assignments-bar" class="progress-fill green-fill"></div></div></article>
+            <article class="metric-card" id="risk-card"><div class="metric-top"><span>Students needing support</span><span class="metric-icon orange">!</span></div><div class="metric-value"><span id="risk-value">—</span></div><div class="metric-foot" id="risk-note">Based on demo thresholds</div><div class="risk-legend"><span><i class="dot red"></i>High priority</span><span><i class="dot yellow"></i>Monitor</span></div></article>
+          </div>
+          <div class="content-grid">
+            <article class="panel performance-panel"><div class="panel-heading"><div><h3>Performance snapshot</h3><p>Average marks by student</p></div><span class="soft-tag">Academic health</span></div><div id="performance-chart" class="bar-chart"></div><div class="chart-legend"><span><i class="legend-dot purple-dot"></i>Average marks / 100</span></div></article>
+            <article class="panel support-panel"><div class="panel-heading"><div><h3>Support signals</h3><p>Students to check in with</p></div><span class="panel-icon">◎</span></div><div id="support-list" class="support-list"></div><button class="text-button" id="view-students-button">View student records →</button></article>
+          </div>
+          <div class="panel activity-panel"><div class="panel-heading"><div><h3>Learning overview</h3><p>Current cohort indicators</p></div><span class="muted small" id="updated-label">Demo dataset</span></div><div id="cohort-bars" class="cohort-bars"></div></div>
+          <p class="disclaimer">Demo analytics only. Risk labels are simple rule-based indicators, not diagnoses or official academic decisions.</p>
+        </section>
+
+        <section id="view-students" class="view" hidden>
+          <div class="section-intro"><div><h2>Student records</h2><p>Review academic progress and identify who may need a check-in.</p></div><button id="export-button" class="btn btn-secondary">↓ Export CSV</button></div>
+          <div class="table-tools"><div class="search-box"><span>⌕</span><input id="student-search" placeholder="Search by name or username" aria-label="Search students"></div><select id="risk-filter" aria-label="Filter by support level"><option value="all">All support levels</option><option value="High">High priority</option><option value="Medium">Monitor</option><option value="Low">On track</option></select></div>
+          <div class="panel table-panel"><div class="table-scroll"><table><thead><tr><th>STUDENT</th><th>ATTENDANCE</th><th>AVG. MARKS</th><th>ASSIGNMENTS</th><th>SUPPORT LEVEL</th><th></th></tr></thead><tbody id="students-table"></tbody></table></div><div id="empty-state" class="empty-state" hidden>No students match this filter.</div></div>
+          <div class="panel editor-panel" id="editor-panel" hidden><div class="panel-heading"><div><h3>Update student record</h3><p>Changes are saved to the application database.</p></div><button class="icon-button" id="close-editor" aria-label="Close editor">×</button></div><form id="student-editor" class="editor-grid"><input type="hidden" id="edit-username"><label>Full name<input id="edit-name" required minlength="2"></label><label>Section<input id="edit-section" required></label><label>Classes attended<input id="edit-present" type="number" min="0" max="500" required></label><label>Total classes<input id="edit-total" type="number" min="1" max="500" required></label><label>Assignments done<input id="edit-done" type="number" min="0" max="500" required></label><label>Total assignments<input id="edit-assign-total" type="number" min="1" max="500" required></label><label>Marks (comma-separated, 0–100)<input id="edit-marks" required placeholder="78, 84, 81"></label><div class="editor-actions"><button type="button" class="btn btn-secondary" id="cancel-editor">Cancel</button><button class="btn btn-primary" type="submit">Save record</button></div></form></div>
+        </section>
+
+        <section id="view-plan" class="view" hidden>
+          <div class="plan-hero"><div><span class="eyebrow">PERSONALISED NEXT STEPS</span><h2>Your success plan</h2><p>Practical actions based on the current attendance, marks, and assignment snapshot.</p></div><span class="plan-spark">✳</span></div>
+          <div class="plan-summary" id="plan-summary"></div>
+          <div id="study-plan-list" class="plan-list"><div class="loading">Building your plan…</div></div>
+          <p class="disclaimer">This is a local rule-based study coach, not a live generative AI service. Recommendations are suggestions and should be discussed with faculty when needed.</p>
+        </section>
+      </div>
+    </main>
+  </div>
+  <script src="/static/success.js" defer></script>
+</body>
+</html>
