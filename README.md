@@ -82,3 +82,28 @@ Health check: `/api/health`. API docs: `/docs`.
 ## Important limitations and security
 
 This is a student-project prototype, not a production university information system. The assistant is a local FAQ engine, not connected to a real university timetable, attendance, fee system, or Wi-Fi directory. Do not store real student records until privacy, access control, backups, and security have been reviewed. Keep the generated admin password private.
+
+
+## Student Analytics and Success Platform
+
+Open the new dashboard at **`/success`** after starting the app. It uses the same role-based login as the campus portal and adds an analytics module for academic progress.
+
+### Included capabilities
+
+- **Overview dashboard:** attendance, average marks, assignment completion, performance bars, and support signals.
+- **Student records:** search and filter demo records, edit attendance/assignment/marks (admin and faculty only), and export the filtered records to CSV.
+- **Study plan:** rule-based suggestions tailored to an individual student's metrics or cohort support signals for faculty/admin.
+- **Access control:** students can only see their own analytics; faculty and admins can see cohort metrics. Only faculty/admin can update student records.
+- **SQLite persistence:** analytics records are saved in the same configured SQLite database as the campus portal.
+
+### Try the analytics module
+
+1. Start the app using the local instructions above.
+2. Open [http://127.0.0.1:8000/success](http://127.0.0.1:8000/success).
+3. Sign in using one of the local demo accounts listed above.
+4. Use the **Student** account to see an individual snapshot, or the **Faculty/Admin** account to view cohort records.
+5. Faculty/admin can edit a student record from **Student records**; changes are saved to SQLite.
+
+The new analytics endpoints are documented automatically at [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs), under **student analytics**. Key routes are `GET /api/analytics/overview`, `GET /api/analytics/students/{username}`, `PUT /api/analytics/students/{username}`, and `GET /api/analytics/study-plan`.
+
+All included student records and scores are fictional demo data. The study coach uses transparent rule-based suggestions rather than a live generative AI service. Risk labels are prompts for supportive check-ins, not official academic decisions. Review privacy, security, backups, and data retention before using real student records.
