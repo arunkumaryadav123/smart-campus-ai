@@ -66,7 +66,7 @@ function signOut(callApi=true) {
   const oldToken = token;
   token = ""; me = null; localStorage.removeItem("campus_token");
   if (callApi && oldToken) fetch("/api/logout", {method:"POST",headers:{"Authorization":`Bearer ${oldToken}`}});
-  $("app-panel").classList.add("hidden"); $("login-panel").classList.remove("hidden"); $("logout").classList.add("hidden");
+  $("app-panel").classList.add("hidden"); $("login-panel").classList.remove("hidden"); $("logout").classList.add("hidden"); $("nav-users").classList.add("hidden");
 }
 $("login-form").addEventListener("submit", async e => {
   e.preventDefault(); $("login-error").textContent = "";
