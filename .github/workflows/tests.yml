@@ -21,5 +21,7 @@ jobs:
         run: pip install -r requirements-dev.txt
       - name: Compile Python files
         run: python -m compileall -q app tests
+      - name: Check frontend JavaScript syntax
+        run: node --check app/static/app.js
       - name: Run API regression tests
         run: pytest -q
